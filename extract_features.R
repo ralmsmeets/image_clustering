@@ -5,7 +5,7 @@ library(dplyr)
 vgg16_notop = keras::application_vgg16(weights = 'imagenet', include_top = FALSE)
 
 #### folder with images
-folder = "camera/"
+folder = "/Users/rogersmeets/testpics/"
 allimages = paste0(folder, dir(folder))
 
 ### helper function to extract features for one image into a vector
@@ -27,9 +27,10 @@ getImageFeatures = function(imgf){
 #### apply function on all images in the folder and put it into one matrix
 #### matrix should have N rows, where N is the number of images
 #### and 25088 columns, the dimension of a feature vector
+
 out = purrr::map(allimages, getImageFeatures)
 out2 = data.frame(out)
 featurematrix = t(as.matrix(out2))
 dim(featurematrix)
 
-
+save(featurematrix, file = "featurematrix.RData")
