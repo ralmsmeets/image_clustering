@@ -4,14 +4,12 @@ library(DT)
 
 # use the umap package in python on the featurematrix that we just calculated
 library(reticulate)
-use_condaenv("my_py36")
+reticulate::use_python('/usr/bin/python')
 
 ## remove the vgg_notop object, for some reason it points to 
 ## conda r-tensorflow env where there is no umap module
 
-rm(vgg16_notop)
-
-umap = import("umap")
+umap = reticulate::import("umap")
 
 embedding = umap$UMAP(
   n_neighbors = 5L,
@@ -20,10 +18,14 @@ embedding = umap$UMAP(
   metric='euclidean'
 )
 
-## compute UMAP with 3 components
+## compute UMAP with 3 components\
+featurematix <- load('featurematrix.Rdata')
 embedding_out = embedding$fit_transform(featurematrix)
 
 ## create data for plotly plot
+folder = "/Users/rogersmeets/testpics/"
+allimages = paste0(folder, dir(folder))
+
 plotdata = data.frame(round(embedding_out,2))
 plotdata$image = paste0(
   "<img src='",
@@ -52,3 +54,5 @@ tbl = DT::datatable(
 )
 
 bscols(widths = c(6, 6), p, tbl)
+
+plotdata <- (plotdata[plotdata$X2<6 & plotdata$X1 < 10,])
